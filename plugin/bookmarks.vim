@@ -34,7 +34,9 @@ function! s:bookmarks_start() abort
   endwhile
 
   lua require("bookmarks").close()
-  exec "'".l:reg
+  if l:ch != '27'
+    exec "'".l:reg
+  endif
 endfunction
 
 noremap <silent> <Plug>(bookmarks_nvim) :<c-u>call <SID>bookmarks_start()<cr>

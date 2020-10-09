@@ -16,7 +16,8 @@ Plug '66RING/bookmarks-nvim'
 
 ## Usage
 
-- `<space>`, Zoom to see more detail
+- `nmap ' <Plug>(bookmarks_nvim)`
+- `<space>`, zoom to see more detail
 
 ## Mapping
 

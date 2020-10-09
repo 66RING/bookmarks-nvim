@@ -12,7 +12,6 @@
 
 
 function! s:bookmarks_start() abort
-  " unmap <buffer> *
   lua require("bookmarks").show_marks()
   redraw
 

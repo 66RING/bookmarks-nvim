@@ -75,6 +75,7 @@ function M.toggle()
   end
 
   close()
+  vim.api.nvim_command("redraw")
   if ch ~= 27 then
     vim.api.nvim_command("'"..reg)
   else

@@ -19,6 +19,15 @@ Plug '66RING/bookmarks-nvim'
 - `nmap ' <Plug>(bookmarks_nvim)`
 - `<space>`, zoom to see more detail
 
+For instance, press `'` will bring up a window of `:marks`
+
+![bringup](./demo/img.png)
+
+Press `<space>` to zoom and see more detail
+
+![bringup](./demo/detail.png)
+
+
 ## Options
 
 | Config               | Default         | Description                           |

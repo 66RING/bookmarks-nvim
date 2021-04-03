@@ -1,23 +1,32 @@
 local M = {
   is_open = false,
-  buf_bookmarks = 0
+  bookmarks_buf = 0
 }
 
-function open()
-  local has_set_win, mark_window = pcall(vim.api.nvim_get_var,"bookmarks_window")
-
-  if has_set_win==false then
-    mark_window = 'vertical botright 30new'
-  end
-
+local function get_marks()
   local format_str = "%5s  %5s  %s"
-  format = get_marks(format_str)
+  local marks = vim.api.nvim_exec("marks", true)
+  marks = marks.."\n"
+  local t = {}
+  for mk, li, view in string.gmatch(marks, "%s?(.-)%s+(.-)%s+%w+%s-(.-)\n") do
+    if(string.sub(view, 2, 2) == '/') then
+      view = " "..string.match(view, ".+/(.-)$")
+    end
+    local formated = string.format(format_str, mk, li, view)
+    table.insert(t, formated)
+  end
+  return t
+end
+
+local function open_bookmarks()
+  local format = get_marks()
+  local nwin_cmd = vim.g.bookmarks_window or 'vertical botright 30new'
 
   -- render window
-  vim.api.nvim_command(mark_window)
-  vim.api.nvim_command("setlocal filetype=bookmarks nonumber norelativenumber buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap modifiable statusline=Marks nocursorline nofoldenable")
-  M.buf_bookmarks = vim.api.nvim_get_current_buf()
+  vim.cmd(nwin_cmd)
+  vim.cmd("setlocal filetype=bookmarks nonumber norelativenumber buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap modifiable statusline=Marks nocursorline nofoldenable")
   M.is_open = true
+  M.bookmarks_buf = vim.fn.bufnr()
 
   -- hightlight
   -- TODO
@@ -25,37 +34,24 @@ function open()
   vim.api.nvim_put(format, "l", false, true)
 end
 
-function get_marks(format_str)
-  marks = vim.api.nvim_exec("marks", true)
-  marks = marks.."\n"
-  local t = {}
-  for mk, li, view in string.gmatch(marks, "%s?(.-)%s+(.-)%s+%w+%s-(.-)\n") do
-    if(string.sub(view, 2, 2) == '/') then
-      view = " "..string.match(view, ".+/(.-)$")
-    end
-    formated = string.format(format_str, mk, li, view)
-    table.insert(t, formated)
-  end
-  return t
-end
-
-function close()
-  vim.api.nvim_command("silent! execute 'bd '"..M.buf_bookmarks)
-  M.buf_bookmarks = 0
+local function close_bookmarks()
+  vim.cmd("bd "..M.bookmarks_buf)
+  vim.cmd("wincmd p")
   M.is_open = false
 end
 
 function M.toggle()
   if M.is_open then
+    close_bookmarks()
     return
   end
-  vim.api.nvim_command("echohl WarningMsg")
-  vim.api.nvim_command("echo ''")
-  vim.api.nvim_command("echo 'Jump to Mark:'")
-  open()
-  vim.api.nvim_command("redraw")
-  local zoom = false
+  vim.cmd("echohl WarningMsg")
+  vim.cmd("echo ''")
+  vim.cmd("echo 'Jump to Mark:'")
+  open_bookmarks()
+  vim.cmd("redraw")
 
+  local zoom = false
   local ch
   local reg
   while 1 do
@@ -65,24 +61,24 @@ function M.toggle()
         break
     end
     if zoom then
-        vim.api.nvim_command("tab close")
-        vim.api.nvim_command("redraw")
+        vim.cmd("tab close")
+        vim.cmd("redraw")
     else
-        vim.api.nvim_command("tab split")
-        vim.api.nvim_command("redraw")
+        vim.cmd("tab split")
+        vim.cmd("redraw")
     end
     zoom = not zoom
   end
 
-  close()
-  vim.api.nvim_command("redraw")
+  close_bookmarks()
+  vim.cmd("redraw")
   if ch ~= 27 then
-    vim.api.nvim_command("'"..reg)
+    vim.cmd("'"..reg)
   else
-    vim.api.nvim_command("echo ''")
-    vim.api.nvim_command("echo 'Jump Cancelled'")
+    vim.cmd("echo ''")
+    vim.cmd("echo 'Jump Cancelled'")
   end
-  vim.api.nvim_command("echohl None")
+  vim.cmd("echohl None")
 end
 
 return M

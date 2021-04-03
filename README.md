@@ -17,15 +17,16 @@ Plug '66RING/bookmarks-nvim'
 ## Usage
 
 - `nmap ' <Plug>(bookmarks_nvim)`
+- `:BookmarksToggle` or `lua require('bookmarks').toggle()`
 - `<space>`, zoom to see more detail
 
 For instance, press `'` will bring up a window of `:marks`
 
-![bringup](./demo/img.png)
+![bringup](https://raw.githubusercontent.com/66RING/bookmarks-nvim/master/.github/images/img.png)
 
 Press `<space>` to zoom and see more detail
 
-![bringup](./demo/detail.png)
+![bringup](https://raw.githubusercontent.com/66RING/bookmarks-nvim/master/.github/images/detail.png)
 
 
 ## Options
